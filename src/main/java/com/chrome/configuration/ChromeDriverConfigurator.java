@@ -15,7 +15,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class ChromeDriverConfigurator {
-    private static String baseUrl;
+    private static String downloadBaseUrl;
     private static boolean isGoole;
     private static String platform = System.getProperty("os.name");
 
@@ -23,15 +23,13 @@ public class ChromeDriverConfigurator {
     }
 
     static {
-        String googleDriverUrl = "https://chromedriver.storage.googleapis.com/";
-        String taobaoDriverUrl = "https://npm.taobao.org/mirrors/chromedriver/";
-        if (urlConnectivity(googleDriverUrl)) {
+        if (urlConnectivity(URLS.googleDriverUrl)) {
             System.out.println("using google mirror to download chrome driver.");
             isGoole = true;
-            baseUrl = googleDriverUrl;
-        } else if (urlConnectivity(taobaoDriverUrl)) {
+            downloadBaseUrl = URLS.googleDriverUrl;
+        } else if (urlConnectivity(URLS.taobaoDriverUrl)) {
             System.out.println("using taobao mirror to download chrome driver.");
-            baseUrl = taobaoDriverUrl;
+            downloadBaseUrl = URLS.taobaoDriverUrl;
             isGoole = false;
         } else {
             Assert.fail("no available chrome driver download address");
@@ -40,24 +38,22 @@ public class ChromeDriverConfigurator {
 
     public static String configureSpecificDriver(float chromeDriverVersion){
         String version = getDriverVersion(chromeDriverVersion);
-        String url = baseUrl + version;
-        String downloadFolderLin = System.getProperty("java.io.tmpdir") + "/" + version;
-        String downloadFolderLWin = System.getProperty("java.io.tmpdir") + version;
+        String url = downloadBaseUrl + version;
         File file;
         if ("Linux".equalsIgnoreCase(platform)) {
-            file = new File(downloadFolderLin + "/chromedriver");
+            file = new File(DownloadDirectory.downloadFolderLin+version + "/chromedriver");
             if (file.exists()) {
                 System.out.println("chrome driver exists at (" + file.getAbsolutePath() + ") re-using it");
                 configure(file);
             } else {
                 System.out.println("downloading chromedriver from url: " + url + "/chromedriver_linux64.zip");
                 try {
-                    FileUtils.copyURLToFile(new URL(url + "/chromedriver_linux64.zip"), new File(downloadFolderLin + "/chromedriver_linux64.zip"));
+                    FileUtils.copyURLToFile(new URL(url + "/chromedriver_linux64.zip"), new File(DownloadDirectory.downloadFolderLin+version + "/chromedriver_linux64.zip"));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                System.out.println("downloaded driver to: " + downloadFolderLin);
-                unzip(new File(downloadFolderLin + "/chromedriver_linux64.zip"), file);
+                System.out.println("downloaded driver to: " + DownloadDirectory.downloadFolderLin+version);
+                unzip(new File(DownloadDirectory.downloadFolderLin+version + "/chromedriver_linux64.zip"), file);
                 try {
                     Runtime.getRuntime().exec("chmod +x " + file.getAbsolutePath());
                 } catch (IOException e) {
@@ -67,19 +63,19 @@ public class ChromeDriverConfigurator {
                 System.out.println("successfully configured chrome driver");
             }
         } else {
-            file = new File(downloadFolderLWin + "\\chromedriver.exe");
+            file = new File(DownloadDirectory.downloadFolderWin +version + "\\chromedriver.exe");
             if (file.exists()) {
                 System.out.println("chrome driver exists at (" + file.getAbsolutePath() + ") re-using it");
                 configure(file);
             } else {
                 System.out.println("downloading chromedriver from url: " + url + "/chromedriver_win32.zip");
                 try {
-                    FileUtils.copyURLToFile(new URL(url + "/chromedriver_win32.zip"), new File(downloadFolderLWin + "\\chromedriver_win32.zip"));
+                    FileUtils.copyURLToFile(new URL(url + "/chromedriver_win32.zip"), new File(DownloadDirectory.downloadFolderWin +version + "\\chromedriver_win32.zip"));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                System.out.println("downloaded driver to: " + downloadFolderLWin);
-                unzip(new File(downloadFolderLWin + "/chromedriver_win32.zip"), file);
+                System.out.println("downloaded driver to: " + DownloadDirectory.downloadFolderWin +version);
+                unzip(new File(DownloadDirectory.downloadFolderWin +version + "/chromedriver_win32.zip"), file);
                 configure(file);
                 System.out.println("successfully configured chrome driver");
             }
@@ -89,24 +85,22 @@ public class ChromeDriverConfigurator {
 
     public static void configureAppropriateDriver() {
         String version = getAppropriateDriverVersion();
-        String url = baseUrl + version;
-        String downloadFolderLin = System.getProperty("java.io.tmpdir") + "/" + version;
-        String downloadFolderLWin = System.getProperty("java.io.tmpdir") + version;
+        String url = downloadBaseUrl + version;
         File file;
         if ("Linux".equalsIgnoreCase(platform)) {
-            file = new File(downloadFolderLin + "/chromedriver");
+            file = new File(DownloadDirectory.downloadFolderLin+version + "/chromedriver");
             if (file.exists()) {
                 System.out.println("chrome driver exists at (" + file.getAbsolutePath() + ") re-using it");
                 configure(file);
             } else {
                 System.out.println("downloading chromedriver from url: " + url + "/chromedriver_linux64.zip");
                 try {
-                    FileUtils.copyURLToFile(new URL(url + "/chromedriver_linux64.zip"), new File(downloadFolderLin + "/chromedriver_linux64.zip"));
+                    FileUtils.copyURLToFile(new URL(url + "/chromedriver_linux64.zip"), new File(DownloadDirectory.downloadFolderLin+version + "/chromedriver_linux64.zip"));
                 } catch (IOException e) {
                     Assert.fail("failed to copy file");
                 }
-                System.out.println("downloaded driver to: " + downloadFolderLin);
-                unzip(new File(downloadFolderLin + "/chromedriver_linux64.zip"), file.getAbsoluteFile());
+                System.out.println("downloaded driver to: " + DownloadDirectory.downloadFolderLin+version);
+                unzip(new File(DownloadDirectory.downloadFolderLin+version + "/chromedriver_linux64.zip"), file.getAbsoluteFile());
                 try {
                     Runtime.getRuntime().exec("chmod +x " + file.getAbsolutePath());
                 } catch (IOException e) {
@@ -116,19 +110,19 @@ public class ChromeDriverConfigurator {
                 System.out.println("successfully configured chrome driver");
             }
         } else {
-            file = new File(downloadFolderLWin + "\\chromedriver.exe");
+            file = new File(DownloadDirectory.downloadFolderWin +version + "\\chromedriver.exe");
             if (file.exists()) {
                 System.out.println("chrome driver exists at (" + file.getAbsolutePath() + ") re-using it");
                 configure(file);
             } else {
                 System.out.println("downloading chromedriver from url: " + url + "/chromedriver_win32.zip");
                 try {
-                    FileUtils.copyURLToFile(new URL(url + "/chromedriver_win32.zip"), new File(downloadFolderLWin + "\\chromedriver_win32.zip"));
+                    FileUtils.copyURLToFile(new URL(url + "/chromedriver_win32.zip"), new File(DownloadDirectory.downloadFolderWin +version + "\\chromedriver_win32.zip"));
                 } catch (IOException e) {
                     Assert.fail("failed to copy file");
                 }
-                System.out.println("downloaded driver to: " + downloadFolderLWin);
-                unzip(new File(downloadFolderLWin + "\\chromedriver_win32.zip"), file);
+                System.out.println("downloaded driver to: " + DownloadDirectory.downloadFolderWin +version);
+                unzip(new File(DownloadDirectory.downloadFolderWin +version + "\\chromedriver_win32.zip"), file);
                 configure(file);
                 System.out.println("successfully configured chrome driver");
             }
@@ -137,12 +131,10 @@ public class ChromeDriverConfigurator {
 
     public static String configureLatestDriver() {
         String version = getLatestDriverVersion();
-        String url = baseUrl + version;
-        String downloadFolderLin = System.getProperty("java.io.tmpdir") + "/" + version;
-        String downloadFolderLWin = System.getProperty("java.io.tmpdir") + version;
+        String url = downloadBaseUrl + version;
         File file;
         if ("Linux".equalsIgnoreCase(platform)) {
-            file = new File(downloadFolderLin + "/chromedriver");
+            file = new File(DownloadDirectory.downloadFolderLin+version + "/chromedriver");
             System.setProperty("webdriver.chrome.driver", file.getAbsolutePath());
             if (file.exists()) {
                 System.out.println("chrome driver exists at (" + file.getAbsolutePath() + ") re-using it");
@@ -150,12 +142,12 @@ public class ChromeDriverConfigurator {
             } else {
                 System.out.println("downloading chromedriver from url: " + url + "/chromedriver_linux64.zip");
                 try {
-                    FileUtils.copyURLToFile(new URL(url + "/chromedriver_linux64.zip"), new File(downloadFolderLin + "/chromedriver_linux64.zip"));
+                    FileUtils.copyURLToFile(new URL(url + "/chromedriver_linux64.zip"), new File(DownloadDirectory.downloadFolderLin+version + "/chromedriver_linux64.zip"));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                System.out.println("downloaded driver to: " + downloadFolderLin);
-                unzip(new File(downloadFolderLin + "/chromedriver_linux64.zip"), file);
+                System.out.println("downloaded driver to: " + DownloadDirectory.downloadFolderLin+version);
+                unzip(new File(DownloadDirectory.downloadFolderLin+version + "/chromedriver_linux64.zip"), file);
                 try {
                     Runtime.getRuntime().exec("chmod +x " + file.getAbsolutePath());
                 } catch (IOException e) {
@@ -165,19 +157,19 @@ public class ChromeDriverConfigurator {
                 System.out.println("successfully configured chrome driver");
             }
         } else {
-            file = new File(downloadFolderLWin + "\\chromedriver.exe");
+            file = new File(DownloadDirectory.downloadFolderWin +version + "\\chromedriver.exe");
             if (file.exists()) {
                 System.out.println("chrome driver exists at(" + file.getAbsolutePath() + ") re-using it");
                 configure(file);
             } else {
                 System.out.println("downloading chromedriver from url: " + url + "/chromedriver_win32.zip");
                 try {
-                    FileUtils.copyURLToFile(new URL(url + "/chromedriver_win32.zip"), new File(downloadFolderLWin + "\\chromedriver_win32.zip"));
+                    FileUtils.copyURLToFile(new URL(url + "/chromedriver_win32.zip"), new File(DownloadDirectory.downloadFolderWin +version + "\\chromedriver_win32.zip"));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                System.out.println("downloaded driver to: " + downloadFolderLWin);
-                unzip(new File(downloadFolderLWin + "\\chromedriver_win32.zip"), new File(file.getAbsolutePath()));
+                System.out.println("downloaded driver to: " + DownloadDirectory.downloadFolderWin +version);
+                unzip(new File(DownloadDirectory.downloadFolderWin +version + "\\chromedriver_win32.zip"), new File(file.getAbsolutePath()));
                 configure(file);
                 System.out.println("successfully configured chrome driver");
             }
@@ -189,7 +181,7 @@ public class ChromeDriverConfigurator {
         String doc = null;
         if (isGoole){
             try {
-                URL url = new URL(baseUrl);
+                URL url = new URL(downloadBaseUrl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 InputStream in = conn.getInputStream();
                 BufferedReader bin = new BufferedReader(new InputStreamReader(in));
@@ -200,7 +192,7 @@ public class ChromeDriverConfigurator {
 
         }else {
             try {
-                doc = Jsoup.parse(new URL(baseUrl), 10000).toString();
+                doc = Jsoup.parse(new URL(downloadBaseUrl), 10000).toString();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -218,14 +210,14 @@ public class ChromeDriverConfigurator {
         String doc = null;
         try {
             if (isGoole){
-                URL url = new URL(baseUrl);
+                URL url = new URL(downloadBaseUrl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 InputStream in = conn.getInputStream();
                 BufferedReader bin = new BufferedReader(new InputStreamReader(in));
                 doc=bin.readLine();
             }
             else {
-                doc = Jsoup.parse(new URL(baseUrl), 10000).toString().replace("\n", "");
+                doc = Jsoup.parse(new URL(downloadBaseUrl), 10000).toString().replace("\n", "");
             }
         } catch (IOException e) {
             e.printStackTrace();
