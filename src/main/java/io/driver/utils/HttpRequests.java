@@ -15,7 +15,7 @@ public class HttpRequests {
     private @NonNull HttpRequest response;
     private boolean isConnectionSetup = false;
     private int millisecond=5000;
-    public @NonNull int statusCode;
+    public int statusCode;
     public @NonNull String text;
     public Map<String, List<String>> responseHeaders;
     public boolean isBadRequest;

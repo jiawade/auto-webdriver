@@ -1,11 +1,8 @@
 plugins {
     id 'java'
+    id 'maven-publish'
+    id 'signing'
 }
-
-group 'org.example'
-version '1.0-SNAPSHOT'
-
-sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -15,6 +12,9 @@ dependencies {
     implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.4'
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+    testCompileOnly 'org.projectlombok:lombok:1.18.12'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.8.0-beta4'
     implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.8.0-beta4'
     implementation group: 'log4j', name: 'log4j', version: '1.2.17'
@@ -26,4 +26,62 @@ dependencies {
     implementation group: 'org.rauschig', name: 'jarchivelib', version: '1.2.0'
     implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.6.0'
 
+}
+
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'io.github.jiawade'
+            artifactId = 'auto-webdriver'
+            version = "1.0.0"
+            from components.java
+
+            pom {
+                name = "auto-webdriver"
+                description = "auto configure browser driver"
+                url = "https://github.com/jiawade/auto-webdriver"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "jiawade"
+                        name = "jiawade"
+                        email = "wade.xiao.x@gmail.com"
+                    }
+                }
+                scm {
+                    connection = "https://github.com/jiawade/auto-webdriver.git"
+                    developerConnection = "scm:git:ssh://git@github.com:jiawade/auto-webdriver.git"
+                    url = "https://github.com/jiawade/auto-webdriver"
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name 'auto-webdriver'
+            url 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+            credentials {
+                username = ""
+                password = ""
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
 }
