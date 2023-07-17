@@ -1,7 +1,6 @@
 package io.driver.utils;
 
 import io.driver.exception.ExecuteRuntimeCommandErrorException;
-import io.driver.manage.enums.DriverType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -102,7 +101,7 @@ public class Helper {
     public static void cleanDirectory(String path) {
         try {
             FileUtils.cleanDirectory(new File(path));
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error(e.toString(), e);
         }
     }

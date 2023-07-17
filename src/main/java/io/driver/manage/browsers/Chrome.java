@@ -1,5 +1,6 @@
 package io.driver.manage.browsers;
 
+import com.jayway.jsonpath.JsonPath;
 import io.driver.exception.FileNotFoundException;
 import io.driver.exception.UnableToGetLocalBroserVersionException;
 import io.driver.manage.AbstractDriverProperties;
@@ -8,8 +9,7 @@ import io.driver.manage.SetDriver;
 import io.driver.manage.enums.DriverType;
 import io.driver.manage.enums.Platform;
 import io.driver.utils.Helper;
-import io.driver.utils.HttpRequests;
-import io.driver.utils.JaywayUtils;
+import io.github.jiawade.tool.utils.HttpRequests;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -139,8 +139,7 @@ public class Chrome extends AutoWebdriver {
         List<String> versions = new ArrayList<>();
         HttpRequests httpRequest = new HttpRequests();
         httpRequest.get(chromeMirrorUrl, new HashMap<>());
-        JaywayUtils jay = new JaywayUtils(httpRequest.getText());
-        List<String> versionRaw = jay.getValues("$..name").stream().filter(i -> !Objects.isNull(i)).collect(Collectors.toList());
+        List<String> versionRaw =  ((List<String>) JsonPath.parse(httpRequest.getText()).read("$..name")).stream().filter(i -> !Objects.isNull(i)).collect(Collectors.toList());
         if (versionRaw.isEmpty()) {
             return versions;
         }

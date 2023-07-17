@@ -8,6 +8,7 @@ import io.driver.manage.SetDriver;
 import io.driver.manage.enums.DriverType;
 import io.driver.manage.enums.Platform;
 import io.driver.utils.*;
+import io.github.jiawade.tool.utils.HttpRequests;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -58,15 +59,13 @@ public class Firefox extends AutoWebdriver {
     @Override
     protected String findBestMatchLocalVersion(DriverType type) {
         String localVersion = getLocalDriverVersion(type);
-        String version = Helper.findBestMatchVersion(localVersion, localFireFoxDriverMapping);
-        if ("".equals(version)) {
-            Map<String, List<Integer>> versions = fetchNewVersionMapping();
-            version = Helper.findBestMatchVersion(localVersion, versions);
-            if ("".equals(version)) {
-                throw new IllegalArgumentException("local version firefox version is: " + localVersion + ", unable to find best match version of the list: " + versions);
-            }
+        Map<String, List<Integer>> versions = fetchNewVersionMapping();
+        if (!versions.isEmpty()) {
+            return Helper.findBestMatchVersion(localVersion, versions);
+
+        } else {
+            return Helper.findBestMatchVersion(localVersion, localFireFoxDriverMapping);
         }
-        return version;
     }
 
     @Override
@@ -82,7 +81,7 @@ public class Firefox extends AutoWebdriver {
             pattern = firefoxMirrorDownloadPattern;
         }
         if (currentPlatform.equals(Platform.Windows)) {
-            String spec = String.valueOf(arch).equals("32") ? "32.zip" : "-aarch64.zip";
+            String spec = String.valueOf(arch).equals("32") ? "32.zip" : "64.zip";
             url = String.format(pattern, driverVersion, driverVersion, currentPlatform.getName()) + spec;
         } else if (currentPlatform.equals(Platform.Mac)) {
             String spec = String.valueOf(arch).equals("32") ? "os.tar.gz" : "os-aarch64.tar.gz";
@@ -128,7 +127,7 @@ public class Firefox extends AutoWebdriver {
         Elements elements = document.selectXpath("//tr/td");
         List<String> list = elements.stream().map(Element::text).collect(Collectors.toList());
         List<List<String>> rawList = groupByNumber(list, 4);
-        Map<String, List<Integer>> versionListMap = rawList.stream().map(i -> {
+        return rawList.stream().map(i -> {
             LinkedList<String> temp = new LinkedList<>(i);
             temp.remove(1);
             String min = temp.get(1).replaceAll("[^0-9]", "");
@@ -145,7 +144,6 @@ public class Firefox extends AutoWebdriver {
                         .map(Integer::parseInt)
                         .map(v -> v == 0 ? Integer.MAX_VALUE : v)
                         .collect(Collectors.toList())));
-        return versionListMap;
     }
 
     private <T> List<List<T>> groupByNumber(List<T> source, int n) {

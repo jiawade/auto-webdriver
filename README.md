@@ -10,7 +10,7 @@ auto-webdriver is a browser driver configurator for selenium
 <dependency>
     <groupId>io.github.jiawade</groupId>
     <artifactId>auto-webdriver</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 </dependency>
 ````
 

@@ -8,7 +8,7 @@ import io.driver.manage.SetDriver;
 import io.driver.manage.enums.DriverType;
 import io.driver.manage.enums.Platform;
 import io.driver.utils.Helper;
-import io.driver.utils.HttpRequests;
+import io.github.jiawade.tool.utils.HttpRequests;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
