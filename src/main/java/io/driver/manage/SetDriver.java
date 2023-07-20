@@ -8,37 +8,40 @@ import java.io.File;
 
 @Slf4j
 public class SetDriver {
+    public static final String chrome = "webdriver.chrome.driver";
+    public static final String firefox = "webdriver.gecko.driver";
+    public static final String edge = "webdriver.edge.driver";
 
     private SetDriver() {
     }
 
     public static void setChrome(String driverFile) {
         verifyFile(driverFile);
-        System.setProperty("webdriver.chrome.driver", driverFile);
-        if (driverFile.equals(System.getProperty("webdriver.chrome.driver"))) {
+        System.setProperty(chrome, driverFile);
+        if (driverFile.equals(System.getProperty(chrome))) {
             log.info("successfully configure chrome driver: {}", driverFile);
         } else {
-            throw new FailedToconfigureDriverException("failed to configure the chrome driver: "+driverFile);
+            throw new FailedToconfigureDriverException("failed to configure the chrome driver: " + driverFile);
         }
     }
 
     public static void setFireFox(String driverFile) {
         verifyFile(driverFile);
-        System.setProperty("webdriver.gecko.driver", driverFile);
-        if (driverFile.equals(System.getProperty("webdriver.gecko.driver"))) {
+        System.setProperty(firefox, driverFile);
+        if (driverFile.equals(System.getProperty(firefox))) {
             log.info("successfully configure firefox driver: {}", driverFile);
         } else {
-            throw new FailedToconfigureDriverException("failed to configure the firefox driver: "+driverFile);
+            throw new FailedToconfigureDriverException("failed to configure the firefox driver: " + driverFile);
         }
     }
 
     public static void setEdge(String driverFile) {
         verifyFile(driverFile);
-        System.setProperty("webdriver.edge.driver", driverFile);
-        if (driverFile.equals(System.getProperty("webdriver.edge.driver"))) {
+        System.setProperty(edge, driverFile);
+        if (driverFile.equals(System.getProperty(edge))) {
             log.info("successfully configure edge driver: {}", driverFile);
         } else {
-            throw new FailedToconfigureDriverException("failed to configure the edge driver: "+driverFile);
+            throw new FailedToconfigureDriverException("failed to configure the edge driver: " + driverFile);
         }
     }
 
