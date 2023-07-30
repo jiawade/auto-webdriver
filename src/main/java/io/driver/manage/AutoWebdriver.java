@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -28,8 +29,10 @@ public abstract class AutoWebdriver extends AbstractDriverProperties {
     }
 
     public static void configChromeDriver() {
-        Chrome chrome = new Chrome();
-        chrome.configure();
+        if (Objects.isNull(System.getProperty(SetDriver.chrome))) {
+            Chrome chrome = new Chrome();
+            chrome.configure();
+        }
     }
 
     public static void configChromeDriver(Boolean clearCache) {
@@ -38,8 +41,10 @@ public abstract class AutoWebdriver extends AbstractDriverProperties {
     }
 
     public static void configEdgeDriver() {
-        Edge edge = new Edge();
-        edge.configure();
+        if (Objects.isNull(System.getProperty(SetDriver.edge))) {
+            Edge edge = new Edge();
+            edge.configure();
+        }
     }
 
     public static void configEdgeDriver(Boolean clearCache) {
@@ -49,8 +54,10 @@ public abstract class AutoWebdriver extends AbstractDriverProperties {
 
 
     public static void configFirefoxDriver() {
-        Firefox firefox = new Firefox();
-        firefox.configure();
+        if (Objects.isNull(System.getProperty(SetDriver.firefox))) {
+            Firefox firefox = new Firefox();
+            firefox.configure();
+        }
     }
 
     public static void configFirefoxDriver(Boolean clearCache) {

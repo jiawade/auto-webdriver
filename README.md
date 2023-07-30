@@ -10,13 +10,13 @@ auto-webdriver is a browser driver configurator for selenium
 <dependency>
     <groupId>io.github.jiawade</groupId>
     <artifactId>auto-webdriver</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 </dependency>
 ````
 
 #### Gradle
 ````gradle
-compile 'io.github.jiawade:auto-webdriver:0.0.1'
+compile 'io.github.jiawade:auto-webdriver:0.0.3'
 ````
 
 
